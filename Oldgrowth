@@ -1,0 +1,100 @@
+import googlemaps
+import cv2
+import numpy as np
+import time
+
+class OldGrowth:
+    def __init__(self):
+        self.gmaps = googlemaps.Client(key='AIzaSyDkW-Y_27f28MNbO09y9_otuTAczIi3rU4')
+        self.camera = cv2.VideoCapture(0)
+        self.current_location = None
+        self.current_plant_name = ''
+        self.user_input = ''
+        self.show_input = False
+
+    def get_gps_data(self):
+        ret, frame = self.camera.read()
+        # Use OpenCV to detect GPS coordinates in the image
+        # ...
+
+        # Assume we detect a GPS point and convert it to lat/long
+        self.current_location = (48.047, -123.853)
+
+    def get_landmarks(self):
+        # Get nearby landmarks from Google Places API
+        landmarks = self.gmaps.places_nearby(location=self.current_location, radius=500, type='landmark')
+        return landmarks
+
+    def get_plants(self):
+        # Use machine learning to identify nearby plants
+        # ...
+
+        # Assume we detect a plant and get its species name
+        plant_name = "Douglas Fir"
+        return plant_name
+
+    def display_map(self):
+        # Use Google Maps API to display a map centered on current location
+        # ...
+
+    def display_camera_view(self):
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        while True:
+            ret, frame = self.camera.read()
+            # Use OpenCV to display camera view with GPS points and plant names overlaid
+            # ...
+
+            # Check if user taps a GPS point
+            if tapped_point:
+                plant_name = self.get_plants()
+                self.current_plant_name = plant_name
+
+                # Display plant name on screen
+                # ...
+
+                self.user_input = ''
+                self.show_input = True
+
+            if self.show_input:
+                cv2.putText(frame, 'Input: ' + self.user_input, (10, 50), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.imshow('frame', frame)
+
+                key = cv2.waitKey(0)
+                if key == 27:  # ESC
+                    self.user_input = ''
+                    self.show_input = False
+                elif key == 13:  # ENTER
+                    self.show_input = False
+                elif key == 8:  # BACKSPACE
+                    self.user_input = self.user_input[:-1]
+                else:
+                    self.user_input += chr(key)
+
+            if not self.show_input and self.current_plant_name:
+                cv2.putText(frame, 'Plant name: ' + self.current_plant_name, (10, 50), font, 1, (255, 255, 255), 2,
+                            cv2.LINE_AA)
+
+            cv2.imshow('frame', frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+    def run(self):
+        # Display loading screen with OGGO CORP logo
+        # ...
+
+        # Get GPS data and display map
+        self.get_gps_data()
+        self.display_map()
+
+        # Switch to camera view and display GPS points and plant names
+        self.display_camera_view()
+
+        self.camera.release()
+        cv2.destroyAllWindows()
+
+
+if __name__ == '__main__':
+    app = OldGrowth()
+    app.run()
+
